@@ -49,10 +49,12 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
         wearViewModel?.getTopCount()?.observe(this@WardrobeActivity, Observer {
             top = it
             changeTitle()
+            setFavUI()
         })
         wearViewModel?.getBottomCount()?.observe(this@WardrobeActivity, Observer {
             bottom = it
             changeTitle()
+            setFavUI()
         })
         wearViewModel?.getCurrentTopWear()?.observe(this@WardrobeActivity, Observer {
             currentTopWear = it
@@ -62,25 +64,36 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
             currentBottomWear = it
             setFavUI()
         })
+        wearViewModel?.getDataChangedEvent()?.observe(this@WardrobeActivity, Observer {
+            setFavUI()
+        })
     }
 
     private fun setFavUI() {
         currentTopWear?.let { itTop ->
             currentBottomWear?.let { itBottom ->
                 if (itTop.pairingIdList?.contains(itBottom.id)!!) {
-                    favFlag = true
-                    fbFav?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav))
+                    selectFav()
                 } else {
-                    favFlag = false
-                    fbFav?.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            this,
-                            R.drawable.ic_fav_unselected
-                        )
-                    )
+                    unSelectFav()
                 }
-            }
-        }
+            } ?: unSelectFav()
+        } ?: unSelectFav()
+    }
+
+    private fun selectFav() {
+        favFlag = true
+        fbFav?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav))
+    }
+
+    private fun unSelectFav() {
+        favFlag = false
+        fbFav?.setImageDrawable(
+            ContextCompat.getDrawable(
+                this,
+                R.drawable.ic_fav_unselected
+            )
+        )
     }
 
     private fun addFav() {

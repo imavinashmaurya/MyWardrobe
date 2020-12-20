@@ -22,6 +22,7 @@ class WearRepository {
     private var currentTopWear: MutableLiveData<WearData> = MutableLiveData()
     private var currentBottomWear: MutableLiveData<WearData> = MutableLiveData()
     private var shuffleEvent: MutableLiveData<Boolean> = MutableLiveData()
+    private var dataChangedEvent: MutableLiveData<Boolean> = MutableLiveData()
 
     private fun getDataBase(context: Context): WearDataBase {
         return WearDataBase.getWearDataBase(context)
@@ -78,5 +79,8 @@ class WearRepository {
 
     fun getShuffleEvent(): MutableLiveData<Boolean> {
         return shuffleEvent
+    }
+    fun getDataChangedEvent(): MutableLiveData<Boolean> {
+        return dataChangedEvent
     }
 }

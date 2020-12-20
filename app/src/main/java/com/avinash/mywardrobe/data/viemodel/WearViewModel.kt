@@ -59,4 +59,8 @@ class WearViewModel(application: Application) : AndroidViewModel(application) {
     fun getShuffleEvent(): MutableLiveData<Boolean>? {
         return wearRepository?.getShuffleEvent()
     }
+
+    fun getDataChangedEvent(): MutableLiveData<Boolean>? {
+        return wearRepository?.getDataChangedEvent()
+    }
 }

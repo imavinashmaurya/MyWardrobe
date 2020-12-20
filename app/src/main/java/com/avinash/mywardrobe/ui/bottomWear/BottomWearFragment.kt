@@ -40,7 +40,7 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
     private var wearViewModel: WearViewModel? = null
     private var bottomWearList: ArrayList<WearData>? = ArrayList()
     var adapter: KRecyclerViewAdapter? = null
-    var previous = 0
+    private var total = 0//for scrolling check
 
     companion object {
         /**
@@ -77,72 +77,30 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
         wearViewModel = ViewModelProvider(this).get(WearViewModel::class.java)
     }
 
+    /**
+     * Observe liveData from room
+     */
     private fun observeData() {
-        var total = 0
         wearViewModel?.getBottomWear()?.observe(viewLifecycleOwner, Observer { itListTopWear ->
             bottomWearList?.clear()
             bottomWearList?.addAll(itListTopWear)
             adapter?.notifyDataSetChanged()
-            if (bottomWearList?.size != total) {
-                bottomWearList?.size?.let {
-                    total = it
-                    scroll(it - 1)
-                }
-            }
+            wearViewModel?.getDataChangedEvent()?.postValue(true)
+            checkForRandom()
             emptyState()
         })
 
         wearViewModel?.getShuffleEvent()?.observe(viewLifecycleOwner, Observer {
-            //bottomWearList?.shuffle()
-            //adapter?.notifyDataSetChanged()
+            // bottomWearList?.shuffle()
+            // adapter?.notifyDataSetChanged()
             showError()
-            checkForRandom()
+            random()
         })
     }
 
-    private fun checkForRandom() {
-        bottomWearList?.size?.let {
-            val random = (0..it).random()
-            if (previous != random || it == 1) {
-                scroll(random)
-            } else {
-                checkForRandom()
-            }
-            previous = random
-
-        }
-    }
-
-    private fun emptyState() {
-        bottomWearList?.size?.let {
-            if (it > 0) {
-                ivBottom?.visibility = View.GONE
-            } else {
-                ivBottom?.visibility = View.VISIBLE
-
-            }
-        }
-    }
-
-    private fun scroll(pos: Int) {
-        if (pos >= 0) {
-            rvBottom?.smoothScrollToPosition(pos)
-        }
-    }
-
-    private fun showError() {
-        bottomWearList?.size?.let {
-            if (it < 1) {
-                context?.let {
-                    CustomToast().setupErrorToast(
-                        it,
-                        it.getString(R.string.bottomWearEmptyList)
-                    )
-                }
-            }
-        }
-    }
-
+    /**
+     * Have used recyclerview for horizontal scroll
+     */
     private fun setUpRecyclerView() {
         val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvBottom?.layoutManager = manager
@@ -185,6 +143,68 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
     }
 
     /**
+     * Check eligibility for scroll
+     */
+    private fun checkForRandom() {
+        if (bottomWearList?.size!! != total) {
+            bottomWearList?.size?.let {
+                if (bottomWearList?.size == 1) {
+                    bottomWearList?.get(0)?.let {
+                        wearViewModel?.getCurrentBottomWear()?.postValue(it)
+                    }
+                } else {
+                    scroll(it - 1)
+                }
+                total = it
+            }
+        }
+    }
+
+    /**
+     * For random scrolling
+     */
+    private fun random() {
+        bottomWearList?.size?.let {
+            val random = (0..it).random()
+            scroll(random)
+        }
+    }
+
+    private fun scroll(pos: Int) {
+        if (pos >= 0) {
+            rvBottom?.smoothScrollToPosition(pos)
+        }
+    }
+
+    /**
+     * To handle shuffle exception
+     */
+    private fun showError() {
+        bottomWearList?.size?.let {
+            if (it < 1) {
+                context?.let {
+                    CustomToast().setupErrorToast(
+                        it,
+                        it.getString(R.string.bottomWearEmptyList)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun emptyState() {
+        bottomWearList?.size?.let {
+            if (it > 0) {
+                ivBottom?.visibility = View.GONE
+            } else {
+                ivBottom?.visibility = View.VISIBLE
+                wearViewModel?.getCurrentBottomWear()?.postValue(null)
+
+            }
+        }
+    }
+
+    /**
      * Show image picker.
      * @param camera If true, uses camera else opens gallery.
      */
@@ -212,6 +232,7 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.fbAddBottomWear -> {
+                //To get the gallery and camera option from user
                 val bottomSheetFragment =
                     ImageOptionBottomSheet.newInstance(this)
                 bottomSheetFragment.isCancelable = false
@@ -225,6 +246,9 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
         }
     }
 
+    /**
+     * To get the gallery and camera option from user
+     */
     override fun onImageOptionSelected(option: String) {
         when (option) {
             ImageOptionBottomSheet.CAMERA -> {
@@ -237,6 +261,11 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
     }
 
     override fun onDelete(wearData: WearData) {
+        bottomWearList?.size?.let {
+            if (it > 2) {
+                scroll(it - 2)//to handle fav state when deleted
+            }
+        }
         wearViewModel?.deleteWearData(wearData)
     }
 }

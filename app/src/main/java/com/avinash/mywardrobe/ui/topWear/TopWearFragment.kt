@@ -22,6 +22,7 @@ import com.avinash.mywardrobe.ui.ImageOptionBottomSheet
 import com.avinash.mywardrobe.ui.OnImageOptionListener
 import com.avinash.mywardrobe.ui.WearHolder
 import com.avinash.mywardrobe.utility.Constant
+import com.avinash.mywardrobe.utility.CustomToast
 import com.avinash.mywardrobe.utility.genericRecyclerview.KRecyclerViewAdapter
 import com.avinash.mywardrobe.utility.genericRecyclerview.KRecyclerViewHolder
 import com.avinash.mywardrobe.utility.genericRecyclerview.KRecyclerViewHolderCallBack
@@ -40,6 +41,7 @@ class TopWearFragment : Fragment(), View.OnClickListener, OnImageOptionListener,
     private var wearViewModel: WearViewModel? = null
     private var topWearList: ArrayList<WearData>? = ArrayList()
     var adapter: KRecyclerViewAdapter? = null
+    var previous = 0
 
     companion object {
         /**
@@ -92,18 +94,41 @@ class TopWearFragment : Fragment(), View.OnClickListener, OnImageOptionListener,
         })
 
         wearViewModel?.getShuffleEvent()?.observe(viewLifecycleOwner, Observer {
-            topWearList?.shuffle()
-            adapter?.notifyDataSetChanged()
-            topWearList?.size?.let {
-                val random = (0..it).random()
-                scroll(random)
-            }
+            //topWearList?.shuffle()
+           //adapter?.notifyDataSetChanged()
+            showError()
+            checkForRandom()
         })
     }
 
+    private fun checkForRandom() {
+        topWearList?.size?.let {
+            val random = (0..it).random()
+            if (previous != random || it == 1) {
+                scroll(random)
+            } else {
+                checkForRandom()
+            }
+            previous = random
+        }
+    }
+
     private fun scroll(pos: Int) {
-        if(pos>=0) {
+        if (pos >= 0) {
             rvTop?.smoothScrollToPosition(pos)
+        }
+    }
+
+    private fun showError() {
+        topWearList?.size?.let {
+            if (it < 1) {
+                context?.let {
+                    CustomToast().setupErrorToast(
+                        it,
+                        it.getString(R.string.topWearEmptyList)
+                    )
+                }
+            }
         }
     }
 
@@ -149,7 +174,7 @@ class TopWearFragment : Fragment(), View.OnClickListener, OnImageOptionListener,
                 val firstVisibleItemPosition: Int =
                     manager.findFirstVisibleItemPosition()
                 val lastItem = firstVisibleItemPosition + visibleItemCount
-                if(firstVisibleItemPosition>0) {
+                if (firstVisibleItemPosition >= 0) {
                     topWearList?.get(firstVisibleItemPosition)?.let {
                         wearViewModel?.getCurrentTopWear()?.postValue(it)
                     }

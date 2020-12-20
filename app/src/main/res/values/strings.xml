@@ -8,4 +8,8 @@
     <string name="btPositiveText">Yes</string>
     <string name="btNegativeText">No</string>
     <string name="deleteMessage">Are you sure you want ot delete this?"</string>
+    <string name="topWearEmptyList">TopWear list is empty!"</string>
+    <string name="bottomWearEmptyList">BottomWear list is empty!"</string>
+    <string name="favError">Both Top and Bottom Wear is needed!"</string>
+
 </resources>

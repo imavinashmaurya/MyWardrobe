@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.avinash.mywardrobe.R
 import com.avinash.mywardrobe.data.room.WearData
 import com.avinash.mywardrobe.data.viemodel.WearViewModel
+import com.avinash.mywardrobe.utility.CustomToast
 import kotlinx.android.synthetic.main.activity_wardrobe.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -104,6 +105,14 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun showError() {
+        if (currentTopWear == null || currentBottomWear == null) {
+            CustomToast().setupErrorToast(
+                this, getString(R.string.favError)
+            )
+        }
+    }
+
     private fun changeTitle() {
         title = "MyWardrobe - Total:${total} - Top:${top} - Bottom:${bottom}"
     }
@@ -117,6 +126,7 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
                     addFav()
                 }
                 setFavUI()
+                showError()
             }
             R.id.fbRandom -> {
                 wearViewModel?.getShuffleEvent()?.postValue(true)

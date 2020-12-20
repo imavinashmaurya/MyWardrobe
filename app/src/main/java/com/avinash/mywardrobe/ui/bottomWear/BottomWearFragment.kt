@@ -22,6 +22,7 @@ import com.avinash.mywardrobe.ui.ImageOptionBottomSheet
 import com.avinash.mywardrobe.ui.OnImageOptionListener
 import com.avinash.mywardrobe.ui.WearHolder
 import com.avinash.mywardrobe.utility.Constant
+import com.avinash.mywardrobe.utility.CustomToast
 import com.avinash.mywardrobe.utility.genericRecyclerview.KRecyclerViewAdapter
 import com.avinash.mywardrobe.utility.genericRecyclerview.KRecyclerViewHolder
 import com.avinash.mywardrobe.utility.genericRecyclerview.KRecyclerViewHolderCallBack
@@ -39,6 +40,7 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
     private var wearViewModel: WearViewModel? = null
     private var bottomWearList: ArrayList<WearData>? = ArrayList()
     var adapter: KRecyclerViewAdapter? = null
+    var previous = 0
 
     companion object {
         /**
@@ -91,13 +93,24 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
         })
 
         wearViewModel?.getShuffleEvent()?.observe(viewLifecycleOwner, Observer {
-            bottomWearList?.shuffle()
-            adapter?.notifyDataSetChanged()
-            bottomWearList?.size?.let {
-                val random = (0..it).random()
-                scroll(random)
-            }
+            //bottomWearList?.shuffle()
+            //adapter?.notifyDataSetChanged()
+            showError()
+            checkForRandom()
         })
+    }
+
+    private fun checkForRandom() {
+        bottomWearList?.size?.let {
+            val random = (0..it).random()
+            if (previous != random || it == 1) {
+                scroll(random)
+            } else {
+                checkForRandom()
+            }
+            previous = random
+
+        }
     }
 
     private fun emptyState() {
@@ -114,6 +127,19 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
     private fun scroll(pos: Int) {
         if (pos >= 0) {
             rvBottom?.smoothScrollToPosition(pos)
+        }
+    }
+
+    private fun showError() {
+        bottomWearList?.size?.let {
+            if (it < 1) {
+                context?.let {
+                    CustomToast().setupErrorToast(
+                        it,
+                        it.getString(R.string.bottomWearEmptyList)
+                    )
+                }
+            }
         }
     }
 
@@ -149,7 +175,7 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
                 val totalItemCount: Int = manager.itemCount
                 val firstVisibleItemPosition: Int = manager.findFirstVisibleItemPosition()
                 val lastItem = firstVisibleItemPosition + visibleItemCount
-                if (firstVisibleItemPosition > 0) {
+                if (firstVisibleItemPosition >= 0) {
                     bottomWearList?.get(firstVisibleItemPosition)?.let {
                         wearViewModel?.getCurrentBottomWear()?.postValue(it)
                     }

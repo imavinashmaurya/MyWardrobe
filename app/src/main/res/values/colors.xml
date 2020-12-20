@@ -13,5 +13,6 @@
     <color name="bottomSheetTitleBac">#EDF0F6</color>
     <color name="textColor">#566575</color>
     <color name="imageBorderColor">#DFE5F0</color>
-
+    <color name="toastBackground">#F0F0F0</color>
+    <color name="toastBackgroundBlack">#EB000000</color>
 </resources>

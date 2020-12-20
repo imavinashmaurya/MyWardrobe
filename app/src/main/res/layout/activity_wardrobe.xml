@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.WardrobeActivity">
 
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -22,7 +29,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/include" />
 
     <fragment
         android:id="@+id/fBottomWear"
@@ -40,12 +47,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:srcCompat="@drawable/ic_shuffle"
-        android:focusable="true" />
+        app:srcCompat="@drawable/ic_shuffle" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fbFav"
@@ -53,11 +60,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:srcCompat="@drawable/ic_fav_unselected"
-        android:focusable="true" />
+        app:srcCompat="@drawable/ic_fav_unselected" />
 
     <View
         android:id="@+id/view"

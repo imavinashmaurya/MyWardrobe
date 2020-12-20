@@ -6,7 +6,10 @@
 
     <color name="colorGray">#4f545a</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 
+    <color name="primaryText">#444444</color>
+    <color name="btTextColor">@color/colorPrimary</color>
     <color name="bottomSheetTitleBac">#EDF0F6</color>
     <color name="textColor">#566575</color>
     <color name="imageBorderColor">#DFE5F0</color>

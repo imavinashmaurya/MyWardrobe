@@ -9,8 +9,8 @@
         android:id="@+id/ivWear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
         android:adjustViewBounds="true"
         android:background="@drawable/bg_image_border"
         android:padding="10dp"
@@ -22,10 +22,22 @@
 
     <TextView
         android:id="@+id/tvPos"
+        style="@style/MediumBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/ivWear"
+        app:layout_constraintEnd_toStartOf="@+id/ivWear"
+        app:layout_constraintStart_toStartOf="@+id/ivWear"
+        app:layout_constraintTop_toTopOf="@+id/ivWear"
+        app:layout_constraintVertical_bias="0.52"
+        app:srcCompat="@drawable/ic_remove" />
 </androidx.constraintlayout.widget.ConstraintLayout>

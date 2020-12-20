@@ -10,6 +10,7 @@ import com.avinash.mywardrobe.R
 import com.avinash.mywardrobe.data.room.WearData
 import com.avinash.mywardrobe.data.viemodel.WearViewModel
 import kotlinx.android.synthetic.main.activity_wardrobe.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
     private var wearViewModel: WearViewModel? = null
@@ -32,6 +33,7 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupUI() {
         fbRandom?.setOnClickListener(this)
         fbFav?.setOnClickListener(this)
+        setSupportActionBar(toolbar)
     }
 
     private fun initViewModel() {
@@ -68,7 +70,7 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
                     favFlag = true
                     fbFav?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav))
                 } else {
-                    favFlag =false
+                    favFlag = false
                     fbFav?.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
@@ -90,6 +92,7 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
     private fun removeFav() {
         currentTopWear?.let { itTop ->
             currentBottomWear?.let { itBottom ->
@@ -108,9 +111,9 @@ class WardrobeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.fbFav -> {
-                if(favFlag){
+                if (favFlag) {
                     removeFav()
-                }else{
+                } else {
                     addFav()
                 }
                 setFavUI()

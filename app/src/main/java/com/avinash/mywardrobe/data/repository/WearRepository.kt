@@ -75,6 +75,7 @@ class WearRepository {
     fun getCurrentBottomWear(): MutableLiveData<WearData> {
         return currentBottomWear
     }
+
     fun getShuffleEvent(): MutableLiveData<Boolean> {
         return shuffleEvent
     }

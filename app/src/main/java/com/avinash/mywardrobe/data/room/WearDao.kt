@@ -22,8 +22,8 @@ interface WearDao {
     suspend fun deleteWear(wear: WearData)
 
     @Query("SELECT COUNT(*) FROM ImageTable")
-    fun getCount():LiveData<Int>
+    fun getCount(): LiveData<Int>
 
     @Query("SELECT COUNT(*) FROM ImageTable WHERE type LIKE :type")
-    fun getTypeCount(type: String):LiveData<Int>
+    fun getTypeCount(type: String): LiveData<Int>
 }

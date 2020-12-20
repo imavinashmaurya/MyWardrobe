@@ -3,4 +3,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="gallery">Gallery</string>
     <string name="camera">Camera</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="my_wardrobe">My Wardrobe</string>
+    <string name="btPositiveText">Yes</string>
+    <string name="btNegativeText">No</string>
+    <string name="deleteMessage">Are you sure you want ot delete this?"</string>
 </resources>

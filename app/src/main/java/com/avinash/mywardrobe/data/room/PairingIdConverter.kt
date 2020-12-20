@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken
 class PairingIdConverter {
 
     /**
-     * Convert a Currency object to a Json
+     * Convert a PairingId object to a Json
      */
     @TypeConverter
     fun fromObjectToJson(stat: HashSet<Int>): String {
@@ -16,7 +16,7 @@ class PairingIdConverter {
     }
 
     /**
-     * Convert a json to a Currency object
+     * Convert a json to a PairingId object
      */
     @TypeConverter
     fun toObject(json: String): HashSet<Int> {

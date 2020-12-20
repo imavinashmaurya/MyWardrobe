@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.SnapHelper
 import com.avinash.mywardrobe.R
 import com.avinash.mywardrobe.data.room.WearData
 import com.avinash.mywardrobe.data.viemodel.WearViewModel
+import com.avinash.mywardrobe.ui.DeleteListener
 import com.avinash.mywardrobe.ui.ImageOptionBottomSheet
 import com.avinash.mywardrobe.ui.OnImageOptionListener
 import com.avinash.mywardrobe.ui.WearHolder
@@ -34,7 +35,7 @@ import kotlinx.android.synthetic.main.fragment_bottom_wear.*
  * Use the [BottomWearFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListener {
+class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListener, DeleteListener {
     private var wearViewModel: WearViewModel? = null
     private var bottomWearList: ArrayList<WearData>? = ArrayList()
     var adapter: KRecyclerViewAdapter? = null
@@ -83,7 +84,7 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
             if (bottomWearList?.size != total) {
                 bottomWearList?.size?.let {
                     total = it
-                    rvBottom?.smoothScrollToPosition(it - 1)
+                    scroll(it - 1)
                 }
             }
             emptyState()
@@ -92,6 +93,10 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
         wearViewModel?.getShuffleEvent()?.observe(viewLifecycleOwner, Observer {
             bottomWearList?.shuffle()
             adapter?.notifyDataSetChanged()
+            bottomWearList?.size?.let {
+                val random = (0..it).random()
+                scroll(random)
+            }
         })
     }
 
@@ -106,17 +111,22 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
         }
     }
 
+    private fun scroll(pos: Int) {
+        if (pos >= 0) {
+            rvBottom?.smoothScrollToPosition(pos)
+        }
+    }
+
     private fun setUpRecyclerView() {
         val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvBottom?.layoutManager = manager
-
         adapter = bottomWearList?.let {
             KRecyclerViewAdapter(requireContext(), it, object :
                 KRecyclerViewHolderCallBack {
                 override fun onCreateViewHolder(@NonNull parent: ViewGroup): KRecyclerViewHolder {
                     val layoutView = LayoutInflater.from(parent.context)
                         .inflate(R.layout.row_image, parent, false)
-                    return WearHolder(layoutView)
+                    return WearHolder(layoutView, this@BottomWearFragment)
                 }
 
                 override fun onHolderDisplayed(
@@ -137,15 +147,15 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount: Int = manager.childCount
                 val totalItemCount: Int = manager.itemCount
-                val firstVisibleItemPosition: Int =
-                    manager.findFirstVisibleItemPosition()
+                val firstVisibleItemPosition: Int = manager.findFirstVisibleItemPosition()
                 val lastItem = firstVisibleItemPosition + visibleItemCount
-                bottomWearList?.get(firstVisibleItemPosition)?.let {
-                    wearViewModel?.getCurrentBottomWear()?.postValue(it)
+                if (firstVisibleItemPosition > 0) {
+                    bottomWearList?.get(firstVisibleItemPosition)?.let {
+                        wearViewModel?.getCurrentBottomWear()?.postValue(it)
+                    }
                 }
             }
         })
-
     }
 
     /**
@@ -164,12 +174,7 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
 
         imagePicker.start { resultCode, data ->
             if (resultCode == Activity.RESULT_OK) {
-                ImagePicker.getFile(data)?.let { file ->
-                    //    Log.i(tag, "Image selected. Path: ${file.path}")
-                }
-
                 ImagePicker.getFilePath(data)?.let { filePath ->
-                    //  Log.i(tag, "Image selected. Path: $filePath")
                     val base64 = getBase64(filePath)
                     val wearData = WearData(image = base64, type = Constant.BOTTOM_WEAR)
                     wearViewModel?.insertWearData(wearData)
@@ -177,7 +182,6 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
             }
         }
     }
-
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -204,5 +208,9 @@ class BottomWearFragment : Fragment(), View.OnClickListener, OnImageOptionListen
                 pickImage(false)
             }
         }
+    }
+
+    override fun onDelete(wearData: WearData) {
+        wearViewModel?.deleteWearData(wearData)
     }
 }
